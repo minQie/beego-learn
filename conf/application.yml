@@ -1,0 +1,47 @@
+# beego 框架自身的拓展项
+beego:
+  # 是否打印 sql（用于对 beego 内部的属性进行配置）
+  orm_debug: true
+  log_dir: ./target/logs
+
+# 数据库连接信息配置
+db:
+  platform: mysql
+  ip: 127.0.0.1
+  port: 8090
+  name: hellobeego
+  username: root
+  password: 123
+
+# 权限验证相关的客户端 key
+client:
+  postman_client_key: 123
+
+# 接口响应数据缓存（内存缓存）配置
+response_cache:
+  # 最大接口缓存数据条数
+  max_entries: 1000
+  # 缓存数据有效时间：两天
+  expire_time_seconds: 43200
+
+# 热点且不经常变更，通常意义上的内存数据缓存（内存缓存）
+# 不一定需要，如果需要，也会同配置的配置中心结构一样，建立一个缓存的缓存中心
+#memory_cache:
+#  max_entries: 1000
+#  expire_time_seconds: 43200
+
+# 文件上传相关配置
+attachment:
+  # 单个文件的大小限制
+  max_file_size_mb: 10
+  # 文件名的字符个数限制（包括拓展名） - 和数据库字段保持一致
+  max_file_name_length: 64
+  # 支持的文件上传类型
+  doc_support_type: [xls, xlsx, doc, pdf]
+  pic_support_type: [png, jpg, jpeg]
+  # 文件上传的存储目录（对于执行程序的相对目录）
+  save_dir: ./target/upload/attachment
+  doc_dir_name: doc
+  pic_dir_name: pic
+
+# 注意，解析器会将文件最后一个回车作为文件结束标识
