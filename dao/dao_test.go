@@ -24,7 +24,7 @@ func TestDao(t *testing.T) {
 	// saveOneTest()
 	// saveListTest()
 	// findOneTest()
-	// findListTest()
+	findListTest()
 	// paramTest()
 	// multiParamTest()
 	// resultMappingTest()
@@ -32,5 +32,5 @@ func TestDao(t *testing.T) {
 	// testOrmDelete()
 	// jsonTimeFieldTest()
 	// transactionTest()
-	transaction2Test()
+	//transaction2Test()
 }

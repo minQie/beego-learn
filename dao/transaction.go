@@ -43,8 +43,8 @@ func (r *testRepo) save2() error {
 	return errors.New("保存失败")
 }
 
-// Repo 中内置 orm.TxOrmer，dao 方法1正常运行，dao 方法2 panic 或 err，都能够正常回滚
-// 但是，Repo 实例无法复用：
+// Repo 中内置 orm.TxOrmer，dao 方法1 正常运行，dao 方法2 panic 或 err，都能够正常回滚
+// 注意，Repo 实例无法复用：
 //     已经提交事务，方法再次调用 或 再次提交事务：transaction has already been committed or rolled back
 //     即使上面允许，开发者也无法主动调用 Begin 方法，即，无法执行多条 SQL 的同事务操作
 func transactionTest() {
@@ -62,17 +62,15 @@ func transactionTest() {
 		logs.Error("save2 发生错误")
 		result = false
 	}
-
 	if result {
 		_ = r.Commit()
 	} else {
 		_ = r.Rollback()
 	}
 
+	// 已经提交或者回滚的事务不能再次开启 - 继续使用
 	if err = r.save1(); err != nil {
 		logs.Error("again1", err)
 	}
-	if err = r.Commit(); err != nil {
-		logs.Error("again1", err)
-	}
+	_ = r.Commit()
 }

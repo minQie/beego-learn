@@ -7,8 +7,11 @@ import (
 )
 
 func paramTest() {
-	sql := `
-    SELECT * FROM user
+	q := `
+    SELECT 
+		*
+	FROM
+		user
     WHERE
         id = ? AND is_deleted = ?`
 
@@ -20,7 +23,7 @@ func paramTest() {
 	// var paramAddress = &param
 
 	var user models.User
-	if err := orm.NewOrm().Raw(sql, 1, 0).QueryRow(&user); err != nil {
+	if err := orm.NewOrm().Raw(q, 1, 0).QueryRow(&user); err != nil {
 		logs.Error(err)
 		return
 	}

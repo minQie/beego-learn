@@ -16,7 +16,8 @@ func BeegoOrmNilSafe(sPtr *string) interface{} {
 }
 
 func saveOneTest() {
-	sql := `INSERT user(
+	sql := `
+	INSERT user(
         role_id,
         account,
         password, 

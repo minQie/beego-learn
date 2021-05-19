@@ -9,7 +9,7 @@ import (
 // 点：beego validation 没有采用开发者自定义校验标签提示的设计
 
 // 源码：
-// 1.从 c.ParseForm → c.Input（决定后边能处理的所有参数） → ParseForm → parseFormToStruct 中可以看得到对 form 和 default 标签的处理（如 form 支持 - 符号，代表忽略）
+// 1.从 c.ParseForm → c.Input（决定后边能处理的所有参数） → ParseForm → parseFormToStruct 中可以看得到对 form 和 default 标签的处理（如 -，代表忽略）
 // 2.beego\v2@v2.0.1\core\validation\util.go 中可以看到对 valid 和 label 标签属性的定义
 
 // 紧密相关的拓展 - beego 的参数解析到结构体的注意点
@@ -20,16 +20,19 @@ import (
 
 // 4.Input 方法会将参数都转化进 c.Ctx.Request.Form，ParseForm 方法本质就是解析这个的
 //  而进行 json 到结构体的转化，使用的是 c.Ctx.Input.RequestBody（这个对应着请求，不需要进行什么特殊处理，即可以直接拿到请求体数据）
-type TForm struct {
-	DevelopName  string `form:"developName"  valid:"Required"`                   // 直接使用 beego 默认提供的校验标签
+
+// 使用 form 标签校验，当校验不通过时，实际提示的参数名是实际结构体的字段名，而不是 form 标签指定的名称
+// （相当不合理，命名反序列化是通过这个的，这个提示是给前端看的啊，当然得和传惨的参数名一致啊）
+type Valid struct {
+	DevelopName  string `form:"developName"  valid:"Required"`                     // 直接使用 beego 默认提供的校验标签
 	BusinessName string `form:"businessName" valid:"CustomRequired" label:"用户名"` // 如果希望自定义校验提示的 方式一
 }
 
 // 假如业务就是需要自定义校验信息，那就通过自定义校验的方式
 // 方式一：实现 beego validation 的接口方法
 // 注意：beego validation 会在标签校验通过后，进行回调
-// （推荐这种，这是 beego 对自身校验规则不够全面的预留用户拓展）
-func (f *TForm) Valid(valid *validation.Validation) {
+// （推荐这种，这是 beego 对自身校验规则的自定义拓展）
+func (f *Valid) Valid(valid *validation.Validation) {
 	if len(f.DevelopName) == 0 {
 		_ = valid.SetError("Name", "用户名不能为空")
 	}

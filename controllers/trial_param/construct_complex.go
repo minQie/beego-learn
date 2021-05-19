@@ -1,11 +1,14 @@
 package trial_param
 
-import "encoding/json"
+import (
+	"beego-learn/models/form"
+	"encoding/json"
+)
 
 // @router /complex_form [POST]
 func (c *ConstructController) ComplexForm() {
 	var (
-		person Person
+		person form.Person
 		err    error
 	)
 	err = c.ParseForm(&person)
@@ -15,7 +18,7 @@ func (c *ConstructController) ComplexForm() {
 // @router /complex_json [POST]
 func (c *ConstructController) ComplexJson() {
 	var (
-		person Person
+		person form.Person
 		err    error
 	)
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &person)

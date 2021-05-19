@@ -1,7 +1,7 @@
 package attachment
 
 import (
-	"beego-learn/base/config"
+	"beego-learn/modules/config"
 	"beego-learn/utils"
 )
 

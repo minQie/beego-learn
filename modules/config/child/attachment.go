@@ -1,6 +1,6 @@
 package child
 
-type AttachmentConfig struct {
+type Attachment struct {
 	MaxFileSizeMB     int64    `yaml:"max_file_size_mb"`
 	MaxFileNameLength int      `yaml:"max_file_name_length"`
 	DocSupportType    []string `yaml:"doc_support_type,flow"`

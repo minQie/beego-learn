@@ -47,33 +47,26 @@ func (r *test2Repo) save2() error {
 // 失败原因：并没有通过开启的事务对象来执行 sql
 func transaction2Test() {
 	var (
-		r      = NewTest2Repo(nil)
-		result = true
-		err    error
+		r   = NewTest2Repo(nil)
+		err error
 	)
 
 	tx, _ := r.Begin()
 	defer func() {
-		if result {
-			if err = tx.Commit(); err != nil {
-				logs.Error("提交事务失败", err)
-			}
+		if err == nil {
+			_ = tx.Commit()
 		} else {
-			if err = tx.Rollback(); err != nil {
-				logs.Error("事务回滚失败", err)
-			}
+			_ = tx.Rollback()
 		}
 	}()
 
 	// 开始执行处于一个事务的两个方法
 	if err = r.save1(); err != nil {
 		logs.Error("save1 发生错误")
-		result = false
 		return
 	}
 	if err = r.save2(); err != nil {
 		logs.Error("save2 发生错误")
-		result = false
 		return
 	}
 

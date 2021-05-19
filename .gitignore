@@ -11,17 +11,26 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# No Explain
 .idea/
+.DS_Store
 
-*.tmp
-*.log
+# Important Config file
+*.conf
+*.yml
+*.yaml
+
+# Go file
 go.sum
+
+# Beego Generate file
+*.log
+*.tmp
 routers/commentsRouter*.go
 
-*.conf
+# Temp file
+target/
 
+# Unrelated file
 *.xlsx
-.DS_Store
 *.sh

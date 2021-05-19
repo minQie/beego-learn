@@ -33,12 +33,12 @@ func saveListTest() {
 	b.Grow(100 + 15*len(users))
 	params := make([]interface{}, 0, 7*len(users))
 
-	b.WriteString(
-		`INSERT user(
+	b.WriteString(`
+	INSERT user(
         role_id, account, password, username, age, gender, birthday
     ) VALUES `)
 
-	oneParamStr := utils.GetBatchInsertConditionStr(7)
+	oneParamStr := utils.OrmJoinRepeat(7)
 	for index, user := range users {
 		// 拼接 sql
 		b.WriteString(oneParamStr)

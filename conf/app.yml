@@ -1,7 +1,8 @@
+# 自定义的配置文件 - 主要是为了使用 yml 格式的配置文件
+
 # beego 框架自身的拓展项
 beego:
   # 是否打印 sql（用于对 beego 内部的属性进行配置）
-  orm_debug: true
   log_dir: ./target/logs
 
 # 数据库连接信息配置

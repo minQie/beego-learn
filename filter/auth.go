@@ -12,8 +12,7 @@ import (
 func Authenticate(c *context.Context) {
 	requestAuthorization := model.ParseRequest(c)
 
-	err := requestAuthorization.Authenticate()
-	if err != nil {
+	if err := requestAuthorization.Authenticate(); err != nil {
 		logs.Error(err)
 		c.Abort(http.StatusUnauthorized, strconv.Itoa(http.StatusUnauthorized))
 		return

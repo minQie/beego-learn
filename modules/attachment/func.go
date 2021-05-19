@@ -1,7 +1,8 @@
 package attachment
 
 import (
-	"beego-learn/base/config"
+	"beego-learn/models/const/attachment"
+	"beego-learn/modules/config"
 	"beego-learn/utils"
 	"fmt"
 	"os"
@@ -10,14 +11,14 @@ import (
 )
 
 // 根据文件拓展名获取文件类型，如何没有匹配到全局配置的文件类型，则返回 nil
-func GetAttachmentType(fileExtension string) (t *Type) {
+func GetType(fileExtension string) (t *Type) {
 	lowerExtension := strings.ToLower(fileExtension)
 
 	for _, extension := range config.C.Attachment.DocSupportType {
 		if lowerExtension == extension {
 			t = &Type{
 				Name: extension,
-				E:    DOC,
+				E:    attachment.DOC,
 			}
 		}
 	}
@@ -26,7 +27,7 @@ func GetAttachmentType(fileExtension string) (t *Type) {
 		if lowerExtension == extension {
 			t = &Type{
 				Name: extension,
-				E:    PIC,
+				E:    attachment.PIC,
 			}
 		}
 	}
@@ -41,25 +42,18 @@ func GetFileNameWithExtension(a *Attachment) string {
 
 // 获取文件存储目录
 func GetExactSaveDir(a *Attachment) string {
-	return path.Join(
-		config.C.Attachment.SaveDir,
-		a.FileExtension,
-		utils.DateTimeToDateString(a.CreateTime),
-	)
+	return path.Join(config.C.Attachment.SaveDir, a.FileExtension, utils.DateTimeToDateString(a.CreateTime))
 }
 
 // 获取完整文件名（文件存储目录 + 文件名）
 func GetFilePath(a *Attachment) string {
-	return path.Join(
-		GetExactSaveDir(a),
-		GetFileNameWithExtension(a),
-	)
+	return path.Join(GetExactSaveDir(a), GetFileNameWithExtension(a))
 }
 
 // 数据从数据库查询出来，需要对一些额外的字段进行赋值
 func Load(a *Attachment) {
 	if a.Type == nil {
-		a.Type = GetAttachmentType(a.FileExtension)
+		a.Type = GetType(a.FileExtension)
 	}
 	if a.File == nil {
 		filePath := a.GetFilePath()

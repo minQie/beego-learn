@@ -11,9 +11,11 @@ type RedirectController struct {
 
 // 重定向
 func (c *RedirectController) Redirect() {
+	var redirectTo = "https://www.baidu.com"
+
 	// 方式一：原生
-	http.Redirect(c.Ctx.ResponseWriter, c.Ctx.Request, "redirect to url", http.StatusFound)
+	http.Redirect(c.Ctx.ResponseWriter, c.Ctx.Request, redirectTo, http.StatusFound)
 
 	// 方式二：beego
-	c.Ctx.Redirect(http.StatusFound, "redirect to url")
+	c.Ctx.Redirect(http.StatusFound, redirectTo)
 }

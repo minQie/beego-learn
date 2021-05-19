@@ -26,14 +26,17 @@ type BaseControllerInterface interface {
 	// 获取用户实际发送请求的完整 url 地址
 	GetUrl() string
 	// 请求
-	ParseBodyJson(param interface{}) error
+	ParseFormAndValidate(param interface{}) error
+	ParseJsonAndValidate(param interface{}) error
+	ParseJson(param interface{}) error
 	Validate(param interface{}) error
-	ParseBodyJsonAndValidate(param interface{}) error
 	// 响应
 	ResponseJson(data interface{}, err error)
-	ResponseSuccessJson(data interface{}) error
-	ResponseFailJson(err error) error
-	ResponseErrJson(errMsg string) error
+	RespOkJson(data interface{}) error
+	RespFailJson(err error) error
+	RespErrJson(errMsg string) error
+
+	GetLoginUserId() int64
 }
 
 func (c *BaseController) GetUrl() string {
@@ -47,9 +50,9 @@ func (c *BaseController) GetUrl() string {
 
 func (c *BaseController) ResponseJson(data interface{}, err error) {
 	if err != nil {
-		err = c.ResponseFailJson(err)
+		err = c.RespFailJson(err)
 	} else {
-		err = c.ResponseSuccessJson(data)
+		err = c.RespOkJson(data)
 	}
 
 	if err != nil {
@@ -57,7 +60,7 @@ func (c *BaseController) ResponseJson(data interface{}, err error) {
 	}
 }
 
-func (c *BaseController) ResponseSuccessJson(data interface{}) error {
+func (c *BaseController) RespOkJson(data interface{}) error {
 	c.Data["json"] = CommonResponse{
 		Code: http.StatusOK,
 		Data: data,
@@ -65,7 +68,7 @@ func (c *BaseController) ResponseSuccessJson(data interface{}) error {
 	return c.ServeJSON()
 }
 
-func (c *BaseController) ResponseFailJson(err error) error {
+func (c *BaseController) RespFailJson(err error) error {
 	c.Data["json"] = CommonResponse{
 		Code: http.StatusInternalServerError,
 		Msg:  err.Error(),
@@ -73,7 +76,7 @@ func (c *BaseController) ResponseFailJson(err error) error {
 	return c.ServeJSON()
 }
 
-func (c *BaseController) ResponseErrJson(errMsg string) error {
+func (c *BaseController) RespErrJson(errMsg string) error {
 	resp := CommonResponse{
 		Code: http.StatusInternalServerError,
 		Msg:  errMsg,
@@ -82,7 +85,21 @@ func (c *BaseController) ResponseErrJson(errMsg string) error {
 	return c.ServeJSON()
 }
 
-func (c *BaseController) ParseBodyJson(param interface{}) error {
+func (c *BaseController) ParseFormAndValidate(param interface{}) error {
+	if err := c.ParseForm(param); err != nil {
+		return err
+	}
+	return c.Validate(param)
+}
+
+func (c *BaseController) ParseJsonAndValidate(param interface{}) error {
+	if err := c.ParseJson(param); err != nil {
+		return err
+	}
+	return c.Validate(param)
+}
+
+func (c *BaseController) ParseJson(param interface{}) error {
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, param); err != nil {
 		c.ResponseJson(nil, fmt.Errorf("读取请求体中的 json 参数失败：%s", err))
 		return err
@@ -109,11 +126,8 @@ func (c *BaseController) Validate(param interface{}) error {
 	return nil
 }
 
-func (c *BaseController) ParseBodyJsonAndValidate(param interface{}) error {
-	// 参数读取
-	if err := c.ParseBodyJson(param); err != nil {
-		return err
-	}
-	// 参数校验
-	return c.Validate(param)
+// 用户没有登录，将返回 -1
+func (c *BaseController) GetLoginUserId() int64 {
+	userId, _ := c.GetInt64("loginUserId", -1)
+	return userId
 }

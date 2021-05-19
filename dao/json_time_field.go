@@ -17,13 +17,11 @@ func jsonTimeFieldTest() {
 	q := `
 	INSERT
 		hellobeego.test_json_field
-	(name, extra) VALUES(?, JSON_OBJECT('refresh_at', ?))`
+	(name, extra) 
+	VALUES
+		(?, JSON_OBJECT('refresh_at', ?))`
 
-	params := []interface{}{
-		"time1",
-		time.Now(),
-	}
-
+	params := []interface{}{"time1", time.Now()}
 	if _, err := orm.NewOrm().Raw(q, params).Exec(); err != nil {
 		panic(err)
 	}

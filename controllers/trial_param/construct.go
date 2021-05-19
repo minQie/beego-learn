@@ -2,6 +2,7 @@ package trial_param
 
 import (
 	"beego-learn/controllers"
+	"beego-learn/models/form"
 	"encoding/json"
 )
 
@@ -15,7 +16,7 @@ type ConstructController struct {
 // @router /form [GET]
 func (c *ConstructController) FormGet() {
 	var (
-		userForm UserForm
+		userForm form.UserForm
 		err      error
 	)
 	err = c.ParseForm(&userForm)
@@ -26,7 +27,7 @@ func (c *ConstructController) FormGet() {
 // @router /form [POST]
 func (c *ConstructController) FormPost() {
 	var (
-		userForm UserForm
+		userForm form.UserForm
 		err      error
 	)
 	err = c.ParseForm(&userForm)
@@ -37,7 +38,7 @@ func (c *ConstructController) FormPost() {
 // @router /json [GET]
 func (c *ConstructController) JsonGet() {
 	var (
-		userForm UserForm
+		userForm form.UserForm
 		err      error
 	)
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &userForm)
@@ -48,7 +49,7 @@ func (c *ConstructController) JsonGet() {
 // @router /json [POST]
 func (c *ConstructController) JsonPost() {
 	var (
-		userForm UserForm
+		userForm form.UserForm
 		err      error
 	)
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &userForm)

@@ -1,7 +1,7 @@
 package model
 
 import (
-	"beego-learn/base/config"
+	"beego-learn/modules/config"
 	"encoding/base64"
 	"errors"
 	"github.com/beego/beego/v2/core/logs"

@@ -11,27 +11,24 @@ import (
 
 // 文件数据 file 保存到指定的目录 saveDir
 func SaveFile(saveDir, saveName string, file multipart.File) (*os.File, error) {
-	err := os.MkdirAll(saveDir, os.ModeDir)
-	if err != nil {
+	var (
+		tempFile *os.File
+		err error
+	)
+
+	if err = os.MkdirAll(saveDir, os.ModeDir); err != nil {
 		log.Error(fmt.Sprintf("文件的具体目录 【%s】 创建失败：%s", saveDir, err))
 		return nil, err
 	}
-
-	tempFile, err := os.OpenFile(saveDir+"/"+saveName, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0666)
-	if err != nil {
+	if tempFile, err = os.OpenFile(saveDir+"/"+saveName, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0666); err != nil {
 		log.Error(fmt.Sprintf("文件创建失败：%s", err))
 		return nil, err
 	}
-
-	_, err = io.Copy(tempFile, file)
-	if err != nil {
+	if _, err = io.Copy(tempFile, file); err != nil {
 		log.Error(fmt.Sprintf("文件保存失败：%s", err))
 		return nil, err
 	}
-
-	// TODO 文件 close 一定要用 defer么
-	err = tempFile.Close()
-	if err != nil {
+	if err = tempFile.Close(); err != nil {
 		log.Error(fmt.Sprintf("文件关闭失败：%s", err))
 		return nil, err
 	}
@@ -40,33 +37,28 @@ func SaveFile(saveDir, saveName string, file multipart.File) (*os.File, error) {
 }
 
 // 是否存在
-func Exists(fileOrDir string) bool {
-	_, err := os.Lstat(fileOrDir)
-	if os.IsNotExist(err) {
-		return false
+func Exists(fileOrDir string) (bool, error) {
+	var err error
+
+	if _, err = os.Lstat(fileOrDir); os.IsNotExist(err) {
+		return false, nil
 	}
 	if err != nil {
-		logs.Error("读取文件报错：%s", err)
-		return false
+		return false, LogError("判断文件是否存在失败", err)
 	}
-	return true
+	return true, nil
 }
 
 // 如果目标目录不存在就创建
 func MkDirIfNotExists(dir, createTip string, createFailTip ...string) {
-	if Exists(dir) {
+	if ok, _ := Exists(dir); !ok {
 		return
 	}
 
 	logs.Info("%s %s", createTip, dir)
+	tip := append(createFailTip, "文件夹创建失败")[0]
 
-	tip := "文件夹创建失败"
-	if len(createFailTip) != 0 {
-		tip = createFailTip[0]
-	}
-	// 创建
-	err := os.MkdirAll(dir, os.ModeDir)
-	if err != nil {
+	if err := os.MkdirAll(dir, os.ModeDir); err != nil {
 		panic(fmt.Sprintf("%s：%s", tip, err))
 	}
 }

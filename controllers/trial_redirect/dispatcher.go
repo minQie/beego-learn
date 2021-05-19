@@ -18,8 +18,8 @@ func (c *DispatcherController) dispatcher() {
 		oriReq     = c.Ctx.Request
 		oriReqBody []byte
 
-		disReq      *http.Request
 		client      = http.DefaultClient
+		disReq      *http.Request
 		disResp     *http.Response
 		disRespBody []byte
 		err         error
@@ -30,18 +30,15 @@ func (c *DispatcherController) dispatcher() {
 		logs.Error("Read origin request body ", err)
 		return
 	}
-
 	// 创建转发请求
 	if disReq, err = http.NewRequest(oriReq.Method, oriReq.URL.String(), bytes.NewReader(oriReqBody)); err != nil {
 		logs.Error("http.NewRequest ", err)
 		return
 	}
-
 	// 复制请求头
 	for k, v := range oriReq.Header {
 		disReq.Header.Set(k, v[0])
 	}
-
 	// 发起转发请求
 	if disResp, err = client.Do(disReq); err != nil {
 		logs.Error("转发请求发生错误 ", err)
