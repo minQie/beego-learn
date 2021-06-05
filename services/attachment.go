@@ -27,7 +27,8 @@ func (s *attachmentService) SaveFiles(attachments []*attachment.Attachment) erro
 	)
 
 	o := orm.NewOrm()
-	utils.HandleTransaction(o, &err)
+	_ = o.Begin()
+	utils.HandleTransaction(o, err)
 
 	// 事务回滚（回滚失败，不删除临时文件）
 	for index, a := range attachments {

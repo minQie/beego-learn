@@ -23,7 +23,7 @@ func (c *AttachmentController) Prepare() {
 
 // @Title 附件上传
 // @Description 文件上传管理之新增文件
-// @Param files
+// @Param files formData binary true 文件列表
 func (c *AttachmentController) Upload() {
 	// TODO 预期外异常的拦截，保证接口调用者获取定义好的数据格式
 	// defer utils.HttpPanic(func(msg string) {
@@ -91,7 +91,7 @@ func (c *AttachmentController) Upload() {
 			SaveName:      utils.Get32BitUUID(),
 			FileExtension: attachmentType.Name,
 			FileSize:      fileHeader.Size,
-			UploadedBy:    userId,
+			CreatedBy:     userId,
 
 			File: file,
 			Type: attachmentType,

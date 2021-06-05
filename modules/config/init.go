@@ -22,6 +22,7 @@ func YamlConfigLoad(config string) {
 	}
 
 	// 数据库配置文件加载
+	// note: 不使用 beego 的 yaml 模块，是因为 beego 的 yaml 模块只支持，将某个 yaml 文件解析成一个 map
 	if err = yaml.Unmarshal(yamlFile, &C); err != nil {
 		panic(fmt.Sprintf("加载自定义配置失败：%s", err))
 	}

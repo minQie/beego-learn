@@ -1,5 +1,6 @@
 package child
 
 type Beego struct {
-	LogDir   string
+	OrmDebug bool   `yaml:"orm_debug"`
+	LogDir   string `yaml:"log_dir"`
 }
