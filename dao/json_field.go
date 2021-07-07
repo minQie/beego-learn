@@ -2,6 +2,7 @@ package dao
 
 import (
 	"github.com/beego/beego/v2/client/orm"
+	"github.com/beego/beego/v2/core/logs"
 	"time"
 )
 
@@ -13,7 +14,7 @@ import (
 // 但是存在问题，时间存储格式如上，是无法正常反序列化的，所以存储到 MySQL 时
 // 不能存储 time.now()、time.now().String()
 // 应该存储：time.now().Format("2006-01-02T15:04:05Z07:00")
-func jsonTimeFieldTest() {
+func timeFieldTest() {
 	q := `
 	INSERT
 		hellobeego.test_json_field
@@ -25,4 +26,25 @@ func jsonTimeFieldTest() {
 	if _, err := orm.NewOrm().Raw(q, params).Exec(); err != nil {
 		panic(err)
 	}
+}
+
+type R struct {
+	J J `orm:"column(j)" json:"j"`
+}
+type J struct {
+	Name string `orm:"column(name)" json:"name"`
+}
+// 结论：查不出来，将 R.J 的类型改为 string 就查询的出来了
+func jsonFieldTest() {
+	q := `
+	SELECT
+		j
+	FROM hellobeego.test_json_field
+	WHERE id = 1`
+
+	r := new(R)
+	if err := orm.NewOrm().Raw(q).QueryRow(r); err != nil {
+		panic(err)
+	}
+	logs.Info(*r)
 }
