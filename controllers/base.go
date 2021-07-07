@@ -45,7 +45,7 @@ func (c *BaseController) GetUrl() string {
 		scheme = "https://"
 	}
 
-	return fmt.Sprintf(strings.Join([]string{scheme, c.Ctx.Request.Host, c.Ctx.Request.RequestURI}, ""))
+	return strings.Join([]string{scheme, c.Ctx.Request.Host, c.Ctx.Request.RequestURI}, "")
 }
 
 func (c *BaseController) ResponseJson(data interface{}, err error) {

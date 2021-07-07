@@ -37,9 +37,9 @@ type Valid struct {
 // 条件：只有标签校验通过后，才会回调执行
 // 《嵌套 struct？》
 // 将调用的 Valid 方法改为 RecursiveValid
-func (f *Valid) Valid(valid *validation.Validation) {
+func (f *Valid) Valid(v *validation.Validation) {
 	if len(f.DevelopName) == 0 {
-		_ = valid.SetError("Name", "用户名不能为空")
+		_ = v.SetError("Name", "用户名不能为空")
 	}
 }
 
