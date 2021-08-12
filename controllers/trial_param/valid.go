@@ -12,12 +12,9 @@ type TController struct {
 
 // @router / [GET]
 func (c *TController) P() {
-	var (
-		f   = new(form.Valid)
-		err error
-	)
-	if err = c.ParseFormAndValidate(f); err != nil {
-		c.ResponseJson(nil, err)
+	var f = new(form.Valid)
+	if msg, err := c.ParseFormAndValidate(f); err != nil {
+		c.RespVJson(msg, err)
 		return
 	}
 

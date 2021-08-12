@@ -1,6 +1,7 @@
 package form
 
 import (
+	"github.com/beego/beego/v2/core/logs"
 	"github.com/beego/beego/v2/core/validation"
 	"strings"
 )
@@ -52,27 +53,44 @@ func init() {
 	_ = validation.AddCustomFunc("CustomRequired", CustomRequired)
 }
 
+// CustomRequired 能返回可以作为接口响应直接返回的参数校验信息
+// 表单实体字段如果不设置 label 标签："<小驼峰字段名> can not be empty"
+// 表单实体字段如果设置 label 标签："<标签>不能为空"
 // v：  如果校验出现错误，应该将自定义错误设置进去
 // obj：标签修饰的 字段值
 // key：标签修饰的 字段名.当前方法名
 func CustomRequired(v *validation.Validation, obj interface{}, compoundKey string) {
+	// 调用 Required 等相关校验方法会将校验错误设置进去
 	if r := v.Required(obj, compoundKey); !r.Ok {
-		// 删除调用 Required 方法设置进去的校验错误
+		// 定位当次设置的错误
 		var index = -1
 		for i, err := range v.Errors {
 			if err == r.Error {
 				index = i
 			}
 		}
-		if index != -1 {
-			v.Errors = append(v.Errors[:index], v.Errors[index+1:]...)
+		if index == -1 {
+			logs.Error("logic fatal", compoundKey)
+			return
 		}
-		// 设置自定义的错误
-		var (
-			params = strings.Split(compoundKey, ".")
-			key    = params[0]
-			value  = params[len(params)-1]
-		)
-		_ = v.SetError(key, value+"不能为空")
+
+		// 准备自定义错误信息
+		key := v.Errors[index].Field
+		key = strings.ToLower(string(key[0])) + key[1:]
+
+		params := strings.Split(compoundKey, ".")
+		label := params[len(params)-1]
+
+		var msg string
+		if len(label) == 0 {
+			msg = key + " can not be empty"
+		} else {
+			msg = label + "不能为空"
+		}
+
+		// 删除老错误
+		v.Errors = append(v.Errors[:index], v.Errors[index+1:]...)
+		// 设置新错误
+		_ = v.SetError(key, msg)
 	}
 }

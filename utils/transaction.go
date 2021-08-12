@@ -1,15 +1,18 @@
 package utils
 
-import "github.com/beego/beego/v2/client/orm"
+import "github.com/beego/beego/v2/adapter/orm"
 
-// var success = true
-// tx, _ = r.Begin()
-// defer help.TxControl(tx, &success)
+// HandleTx example
+// var err error
+// o := orm.NewOrm()
+// _ = o.Begin()
+// defer help.HandleTx(o, &err)
 // ...
-func TxControl(tx orm.TxOrmer, success *bool) {
-	if *success {
-		_ = tx.Commit()
+// repo.NewXxx(o).Xxx
+func HandleTx(o orm.Ormer, e *error) {
+	if *e == nil {
+		_ = o.Commit()
 	} else {
-		_ = tx.Rollback()
+		_ = o.Rollback()
 	}
 }

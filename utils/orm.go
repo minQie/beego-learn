@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"github.com/beego/beego/v2/adapter/orm"
 	cliOrm "github.com/beego/beego/v2/client/orm"
@@ -29,11 +30,10 @@ func PackRowsErr(err error, modelName string) error {
 	}
 }
 
-// 判断错误类型，实际上面或者这里的方法都行
-func IsNoRow(err error) bool {
-	return err == cliOrm.ErrNoRows
+func IsNoRow(e error) bool {
+	return errors.Is(e, cliOrm.ErrNoRows)
 }
 
-func IsMultiRows(err error) bool {
-	return err == cliOrm.ErrMultiRows
+func IsMultiRows(e error) bool {
+	return errors.Is(e, cliOrm.ErrMultiRows)
 }
