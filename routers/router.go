@@ -69,8 +69,9 @@ func init() {
 	// 缓存
 	// web.InsertFilter(MainPathPre+"/*", web.BeforeRouter, filter.ResponseCache)
 	// 跨域
-	// TODO 修改时机可行么？
-	web.InsertFilter("*", web.AfterExec, cors.Allow(&cors.Options{
+	// 执行时机不能等于 3，否则不执行，因为请求已经写完了：server/web/filter.go:74
+	// 执行时机不能等于 2，否则预检请求提示 404
+	web.InsertFilter("*", web.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins:  true,
 		AllowCredentials: true,
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},

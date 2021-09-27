@@ -1,5 +1,7 @@
 package controllers
 
+import "encoding/json"
+
 /* 当前文件的核心结构体，内置 beego 的 Controller 基类，就能够使用其内部的 接口、... */
 type HelloController struct {
 	BaseController
@@ -15,7 +17,22 @@ func (c *HelloController) Get() {
 	c.Hello()
 }
 
-// @router /hello/:key [GET]
+// @router /:key [GET]
 func (c *HelloController) Hello() {
 	c.ResponseJson("hello", nil)
+}
+
+// @router /postForm [POST]
+func (c *HelloController) PostForm() {
+	name := c.GetString("name")
+
+	c.ResponseJson(name, nil)
+}
+
+// @router /postJson [POST]
+func (c *HelloController) PostJson() {
+	m := map[string]string{}
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &m)
+
+	c.ResponseJson(m, err)
 }
